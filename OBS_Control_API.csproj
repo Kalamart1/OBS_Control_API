@@ -32,6 +32,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="main.cs" />
+    <Compile Include="MsgTypes.cs" />
+    <Compile Include="RequestManager.cs" />
+    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="Events.cs" />
+    <Compile Include="Requests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +55,10 @@
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
     <Reference Include="MelonLoader, Version=0.5.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\MelonLoader.dll</HintPath>
@@ -61,6 +70,9 @@
     <Reference Include="RumbleModdingAPI">
       <HintPath>Z:\RUMBLE\RUMBLE_install\Mods\RumbleModdingAPI.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
