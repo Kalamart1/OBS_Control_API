@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using RumbleModUI;
 
 namespace OBS_Control_API
 {
@@ -14,11 +15,12 @@ namespace OBS_Control_API
     {
         //constants
         private bool forceReplayBuffer = true;
-        private const string ip = "localhost";
-        private const int port = 4455;
-        private const string password = "your_password_here";
+        private string ip = "localhost";
+        private int port = 4455;
+        private string password = "your_password_here";
 
         // variables
+        Mod Mod = new Mod();
         private ConnectionManager connectionManager;
         private static RequestManager requestManager;
 
@@ -57,17 +59,33 @@ namespace OBS_Control_API
 
         /**
          * <summary>
-         * Called when the mod is initialized at the start of the game.
+         * Initialize the websocket client.
          * </summary>
          */
-        public override void OnLateInitializeMelon()
+        public void InitClient()
         {
             requestManager = new RequestManager();
             connectionManager = new ConnectionManager(requestManager, ip, port, password);
             InitEvents();
             onConnect += OnConnect;
             onDisconnect += OnDisconnect;
-            connectionManager.Start();
+        }
+
+        /**
+         * <summary>
+         * Called when the scene has finished loading.
+         * When we are in the loader scene, starts the connection thread.
+         * </summary>
+         */
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        {
+            if (sceneName == "Loader")
+            {
+                InitClient();
+                SetUIOptions();
+                OnUISaved();
+                UI.instance.UI_Initialized += OnUIInit;
+            }
         }
 
         /**
@@ -77,11 +95,12 @@ namespace OBS_Control_API
          */
         public void Connect()
         {
-            if (!IsConnected())
+            if (IsConnected())
             {
-                connectionManager.UpdateWebsocketConfig(ip, port, password);
-                connectionManager.Start();
+                Disconnect();
             }
+            connectionManager.UpdateWebsocketConfig(ip, port, password);
+            connectionManager.Start();
         }
 
         /**
@@ -122,6 +141,51 @@ namespace OBS_Control_API
             isStreamActive = false;
         }
 
+
+        /**
+         * <summary>
+         * Specify the different options that will be used in the ModUI settings
+         * </summary>
+         */
+        private void SetUIOptions()
+        {
+            Mod.ModName = BuildInfo.ModName;
+            Mod.ModVersion = BuildInfo.ModVersion;
+
+            Mod.SetFolder("OBS_Control_API");
+            Mod.AddToList("Force enable replay buffer", true, 0, "Never forget to start the replay buffer again!\n" +
+                "The mod will start it for you on connection, and stop it as you close the game.", new Tags { });
+            Mod.AddToList("IP address", "localhost", "IP address of the OBS websocket server.", new Tags { });
+            Mod.AddToList("Port", 4455, "Port used by the OBS websocket server.", new Tags { });
+            Mod.AddToList("Password", "", "Password for the OBS websocket server.", new Tags { });
+            Mod.GetFromFile();
+        }
+
+        /**
+         * <summary>
+         * Called when the actual ModUI window is initialized
+         * </summary>
+         */
+        private void OnUIInit()
+        {
+            Mod.ModSaved += OnUISaved;
+            UI.instance.AddMod(Mod);
+        }
+
+        /**
+         * <summary>
+         * Called when the user saves a configuration in ModUI
+         * </summary>
+         */
+        private void OnUISaved()
+        {
+            forceReplayBuffer = (bool)Mod.Settings[0].SavedValue;
+            ip = (string)Mod.Settings[1].SavedValue;
+            port = (int)Mod.Settings[2].SavedValue;
+            password = (string)Mod.Settings[3].SavedValue;
+            Connect();
+        }
+
         /**
          * <summary>
          * Called 50 times per second, used for frequent updates.
@@ -143,7 +207,7 @@ namespace OBS_Control_API
                 Log("Stopping replay buffer");
                 StopReplayBuffer();
             }
-            connectionManager.Stop();
+            Disconnect();
         }
 
         /**
