@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OBS_Control_API</RootNamespace>
     <AssemblyName>OBS_Control_API</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,9 +33,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="main.cs" />
+    <Compile Include="MsgTypes.cs" />
+    <Compile Include="RequestManager.cs" />
+    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="Events.cs" />
+    <Compile Include="Requests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Il2CppBucketheadEntertainment.Plugins">
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\Il2CppAssemblies\Il2CppBucketheadEntertainment.Plugins.dll</HintPath>
     </Reference>
@@ -47,8 +56,14 @@
     <Reference Include="Il2CppRUMBLE.Runtime">
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Il2CppNewtonsoft.Json">
-      <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\Il2CppAssemblies\Il2CppNewtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Runtime.Serialization">
+      <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\Il2CppAssemblies\Il2CppSystem.Runtime.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem">
+      <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\Il2CppAssemblies\Il2CppSystem.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
@@ -57,10 +72,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\net6\MelonLoader.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Net.WebSockets.Client, Version=4.0.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Net.WebSockets.Client.4.3.2\lib\net46\System.Net.WebSockets.Client.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Z:\RUMBLE\RUMBLE_install\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

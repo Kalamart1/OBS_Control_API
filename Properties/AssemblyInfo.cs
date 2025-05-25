@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using MelonLoader;
 using OBS_Control_API; // The namespace of your mod class
 // ...
-[assembly: MelonInfo(typeof(OBS_Control_API.MyMod), OBS_Control_API.BuildInfo.ModName, OBS_Control_API.BuildInfo.ModVersion, OBS_Control_API.BuildInfo.Author)]
+[assembly: MelonInfo(typeof(OBS_Control_API.OBS), OBS_Control_API.BuildInfo.ModName, OBS_Control_API.BuildInfo.ModVersion, OBS_Control_API.BuildInfo.Author)]
 [assembly: VerifyLoaderVersion(0, 6, 5, true)]
 [assembly: MelonGame("Buckethead Entertainment", "RUMBLE")]
 [assembly: MelonColor(255, 255, 31, 90)]
