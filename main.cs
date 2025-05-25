@@ -1,5 +1,8 @@
 ﻿using MelonLoader;
 using RumbleModUI;
+using RumbleModdingAPI;
+using UnityEngine;
+using System.Collections;
 
 namespace OBS_Control_API
 {
@@ -18,6 +21,8 @@ namespace OBS_Control_API
         private string ip = "localhost";
         private int port = 4455;
         private string password = "your_password_here";
+        private string[] keyBindings = { "Nothing", "Nothing" };
+        private bool[] bindingLocked = { false, false };
 
         // variables
         Mod Mod = new Mod();
@@ -62,7 +67,7 @@ namespace OBS_Control_API
          * Initialize the websocket client.
          * </summary>
          */
-        public void InitClient()
+        private void InitClient()
         {
             requestManager = new RequestManager();
             connectionManager = new ConnectionManager(requestManager, ip, port, password);
@@ -158,6 +163,22 @@ namespace OBS_Control_API
             Mod.AddToList("IP address", "localhost", "IP address of the OBS websocket server.", new Tags { });
             Mod.AddToList("Port", 4455, "Port used by the OBS websocket server.", new Tags { });
             Mod.AddToList("Password", "", "Password for the OBS websocket server.", new Tags { });
+            Mod.AddToList("Key binding: both left buttons", "Save replay buffer",
+                    "Action to perform when both buttons on the left controller are being pressed.\n" +
+                    "Possible values:\n" +
+                    "- Nothing\n" +
+                    "- Save replay buffer\n" +
+                    "- Start recording\n" +
+                    "- Stop recording\n" +
+                    "- Toggle recording", new Tags { });
+            Mod.AddToList("Key binding: both right buttons", "Nothing",
+                    "Action to perform when both buttons on the right controller are being pressed.\n" +
+                    "Possible values:\n" +
+                    "- Nothing\n" +
+                    "- Save replay buffer\n" +
+                    "- Start recording\n" +
+                    "- Stop recording\n" +
+                    "- Toggle recording", new Tags { });
             Mod.GetFromFile();
         }
 
@@ -183,7 +204,70 @@ namespace OBS_Control_API
             ip = (string)Mod.Settings[1].SavedValue;
             port = (int)Mod.Settings[2].SavedValue;
             password = (string)Mod.Settings[3].SavedValue;
+            keyBindings[0] = (string)Mod.Settings[4].SavedValue;
+            keyBindings[1] = (string)Mod.Settings[5].SavedValue;
             Connect();
+        }
+
+        /**
+         * <summary>
+         * Executes an action that is connected to a key binding.
+         * </summary>
+         */
+        private void ExecuteKeyBinding(int index)
+        {
+            bindingLocked[index] = true;
+            switch (keyBindings[index])
+            {
+                case "Save replay buffer":
+                    if(SaveReplayBuffer())
+                    {
+                        Log($"Saved replay buffer");
+                    }
+                    break;
+                case "Start recording":
+                    if (StartRecord())
+                    {
+                        Log($"Started recording");
+                    }
+                    break;
+                case "Stop recording":
+                    {
+                        var res = StopRecord();
+                        if (res != null)
+                        {
+                            Log($"Stopped recording, saved to: {res.outputPath}");
+                        }
+                    }
+                    break;
+                case "Toggle recording":
+                    {
+                        var res = ToggleRecord();
+                        if (res != null)
+                        {
+                            var active = res.outputActive;
+                            string toggleValue = active ? "Started" : "Stopped";
+                            Log($"{toggleValue} recording");
+                        }
+                    }
+                    break;
+                default:
+                    Log($"Invalid key binding \"{keyBindings[index]}\"");
+                    break;
+            }
+            MelonCoroutines.Start(UnlockKeyBinding(index));
+        }
+
+        /**
+         * <summary>
+         * Waits for 1 second before making the key binding available again
+         * </summary>
+         */
+        private IEnumerator UnlockKeyBinding(int index)
+        {
+            yield return new WaitForSeconds(1f);
+            bindingLocked[index] = false;
+            yield break;
         }
 
         /**
@@ -193,6 +277,20 @@ namespace OBS_Control_API
          */
         public override void OnFixedUpdate()
         {
+            if (!bindingLocked[0] && keyBindings[0]!="Nothing")
+            {
+                if(Calls.ControllerMap.LeftController.GetPrimary() > 0 && Calls.ControllerMap.LeftController.GetSecondary() > 0)
+                {
+                    ExecuteKeyBinding(0);
+                }
+            }
+            if (!bindingLocked[1] && keyBindings[1] != "Nothing")
+            {
+                if (Calls.ControllerMap.RightController.GetPrimary() > 0 && Calls.ControllerMap.RightController.GetSecondary() > 0)
+                {
+                    ExecuteKeyBinding(1);
+                }
+            }
         }
 
         /**
