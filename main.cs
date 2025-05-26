@@ -3,6 +3,8 @@ using RumbleModUI;
 using RumbleModdingAPI;
 using UnityEngine;
 using System.Collections;
+using Il2CppRUMBLE.Players.Subsystems;
+using Il2CppRUMBLE.Managers;
 
 namespace OBS_Control_API
 {
@@ -23,11 +25,13 @@ namespace OBS_Control_API
         private string password = "your_password_here";
         private string[] keyBindings = { "Nothing", "Nothing" };
         private bool[] bindingLocked = { false, false };
+        private bool hapticFeedback = true;
 
         // variables
         Mod Mod = new Mod();
         private ConnectionManager connectionManager;
         private static RequestManager requestManager;
+        private PlayerHaptics playerHaptics;
 
         private bool isReplayBufferActive = false;
         private bool isRecordingActive = false;
@@ -74,6 +78,9 @@ namespace OBS_Control_API
             InitEvents();
             onConnect += OnConnect;
             onDisconnect += OnDisconnect;
+            onRecordingStarted += Feedback;
+            onRecordingStopping += Feedback;
+            onReplayBufferSaved += Feedback;
         }
 
         /**
@@ -91,6 +98,7 @@ namespace OBS_Control_API
                 OnUISaved();
                 UI.instance.UI_Initialized += OnUIInit;
             }
+            playerHaptics = PlayerManager.instance.playerControllerPrefab.gameObject.GetComponent<PlayerHaptics>();
         }
 
         /**
@@ -179,6 +187,7 @@ namespace OBS_Control_API
                     "- Start recording\n" +
                     "- Stop recording\n" +
                     "- Toggle recording", new Tags { });
+            Mod.AddToList("Haptic feedback", true, 0, "Have a haptic impulse on both controllers when the recording state changes.", new Tags { });
             Mod.GetFromFile();
         }
 
@@ -206,6 +215,7 @@ namespace OBS_Control_API
             password = (string)Mod.Settings[3].SavedValue;
             keyBindings[0] = (string)Mod.Settings[4].SavedValue;
             keyBindings[1] = (string)Mod.Settings[5].SavedValue;
+            hapticFeedback = (bool)Mod.Settings[6].SavedValue;
             Connect();
         }
 
@@ -268,6 +278,42 @@ namespace OBS_Control_API
             yield return new WaitForSeconds(1f);
             bindingLocked[index] = false;
             yield break;
+        }
+
+        /**
+         * <summary>
+         * If needed, perform a feedback to notify the user of an event.
+         * </summary>
+         */
+        private void Feedback()
+        {
+            if (hapticFeedback)
+            {
+                HapticFeedback(1, 0.2f);
+            }
+        }
+
+        /**
+         * <summary>
+         * If needed, perform a feedback to notify the user of an event (for events that provide a string)
+         * </summary>
+         */
+        private void Feedback(string value)
+        {
+            Feedback();
+        }
+
+        /**
+         * <summary>
+         * Perform a haptic impulse on both controllers.
+         * </summary>
+         */
+        public void HapticFeedback(float intensity, float duration)
+        {
+            if (playerHaptics != null)
+            {
+                playerHaptics.PlayControllerHaptics(intensity, duration, intensity, duration);
+            }
         }
 
         /**
