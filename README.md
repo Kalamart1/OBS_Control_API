@@ -18,14 +18,16 @@ In addition to the displayed dependencies, this mod requires the **obs-websocket
 ## Setup
 1. After starting the game with the mod and loading into the gym, you should be able to edit the options in ModUI by pessing **F10**. This needs to be done on the first time you use the mod, in order to configure the websocket client.
 
-2. Open OBS Studio and go to **"Tools"->"WebSocket Server Settings"**. There you will find:
-    - the password to the OBS websocket server. Copy it and enter it into ModUI.
-    - the IP address of the server. You only need to enter it into ModUI if you're running OBS and the game on different computers. Else you can leave the default value "localhost".
-    - the port that the websocket server is operating on. The default value is 4455, if you didn't change it manually then you shouldn't need to change it in ModUI.
-
-    Once you save the configuration, the mod will try to connect again, and if it's successful you should see it under "**Connected WebSocket Sessions"**.
+2. Open OBS Studio and go to **"Tools"->"WebSocket Server Settings"**. There, check **"Enable WebSocket server"**:
 
     ![Screenshot of the settings window](img/OBS_settings.png)
+    
+    After that, use the server's configuration to configure the mod:
+    - Copy the password and enter it into ModUI.
+    - The IP address of the server only needs to be entered if you're running OBS and the game on different computers. Else you can leave the default value "localhost".
+    - By default, the websocket server is operating on port 4455. If you didn't change it manually then you shouldn't need to change it in ModUI.
+
+    Once you save the configuration, the mod will try to connect again, and if it's successful you should see it under "**Connected WebSocket Sessions"**.
 
 3. Other options you can set in ModUI are:
     - do you want the mod to start the replay buffer automatically as soon as it connects to OBS (highly recommended)?
