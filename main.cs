@@ -327,6 +327,7 @@ namespace OBS_Control_API
             {
                 if(Calls.ControllerMap.LeftController.GetPrimary() > 0 && Calls.ControllerMap.LeftController.GetSecondary() > 0)
                 {
+                    Log($"Left key binding activated");
                     ExecuteKeyBinding(0);
                 }
             }
@@ -334,6 +335,7 @@ namespace OBS_Control_API
             {
                 if (Calls.ControllerMap.RightController.GetPrimary() > 0 && Calls.ControllerMap.RightController.GetSecondary() > 0)
                 {
+                    Log($"Right key binding activated");
                     ExecuteKeyBinding(1);
                 }
             }
