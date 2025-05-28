@@ -71,7 +71,14 @@ namespace OBS_Control_API
                         }
                         else if (!resp.requestStatus.result)
                         {
-                            LogError($"Request {requestType} returned error {resp.requestStatus.code}: {resp.requestStatus.comment}");
+                            if (resp.requestStatus.comment is null)
+                            {
+                                LogError($"Request {requestType} returned error code {resp.requestStatus.code}");
+                            }
+                            else
+                            {
+                                LogError($"Request {requestType} returned error code {resp.requestStatus.code}: {resp.requestStatus.comment}");
+                            }
                             return null;
                         }
                     }
@@ -136,6 +143,10 @@ namespace OBS_Control_API
                     if (data.responseData!=null)
                     {
                         resp.responseData = data.responseData.ToString();
+                    }
+                    else
+                    {
+                        resp.responseData = "{}";
                     }
                     currentRequests[requestId] = resp;
                 }
