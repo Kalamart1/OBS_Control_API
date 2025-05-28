@@ -20,23 +20,23 @@ namespace OBS_Control_API
     {
         //constants
         private bool forceReplayBuffer = true;
-        private string ip = "localhost";
-        private int port = 4455;
-        private string password = "your_password_here";
+        private static string ip = "localhost";
+        private static int port = 4455;
+        private static string password = "your_password_here";
         private string[] keyBindings = { "Nothing", "Nothing" };
         private bool[] bindingLocked = { false, false };
         private bool hapticFeedback = true;
 
         // variables
         Mod Mod = new Mod();
-        private ConnectionManager connectionManager;
+        private static ConnectionManager connectionManager;
         private static RequestManager requestManager;
-        private PlayerHaptics playerHaptics;
+        private static PlayerHaptics playerHaptics;
 
-        private bool isReplayBufferActive = false;
-        private bool isRecordingActive = false;
-        private bool isStreamActive = false;
-        private bool stopReplayBufferAtShutdown = false;
+        private static bool isReplayBufferActive = false;
+        private static bool isRecordingActive = false;
+        private static bool isStreamActive = false;
+        private static bool stopReplayBufferAtShutdown = false;
 
         /**
          * <summary>
@@ -106,7 +106,7 @@ namespace OBS_Control_API
          * (Re)start connection thread.
          * </summary>
          */
-        public void Connect()
+        public static void Connect()
         {
             if (IsConnected())
             {
@@ -121,7 +121,7 @@ namespace OBS_Control_API
          * Close the connection and don't try to reconnect.
          * </summary>
          */
-        public void Disconnect()
+        public static void Disconnect()
         {
             connectionManager.Stop();
         }
@@ -308,7 +308,7 @@ namespace OBS_Control_API
          * Perform a haptic impulse on both controllers.
          * </summary>
          */
-        public void HapticFeedback(float intensity, float duration)
+        public static void HapticFeedback(float intensity, float duration)
         {
             if (playerHaptics != null)
             {
@@ -359,7 +359,7 @@ namespace OBS_Control_API
          * Returns true if the client is connected to OBS, ready to send requests and receive events.
          * </summary>
          */
-        public bool IsConnected()
+        public static bool IsConnected()
         {
             return connectionManager.IsConnected();
         }
@@ -369,7 +369,7 @@ namespace OBS_Control_API
          * Returns true if the replay buffer is active.
          * </summary>
          */
-        public bool IsReplayBufferActive()
+        public static bool IsReplayBufferActive()
         {
             return isReplayBufferActive;
         }
@@ -379,7 +379,7 @@ namespace OBS_Control_API
          * Returns true if recording is active.
          * </summary>
          */
-        public bool IsRecordingActive()
+        public static bool IsRecordingActive()
         {
             return isRecordingActive;
         }
@@ -389,7 +389,7 @@ namespace OBS_Control_API
          * Returns true if streaming is active.
          * </summary>
          */
-        public bool IsStreamActive()
+        public static bool IsStreamActive()
         {
             return isStreamActive;
         }
