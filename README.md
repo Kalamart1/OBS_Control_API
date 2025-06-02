@@ -37,7 +37,7 @@ In addition to the displayed dependencies, this mod requires the **obs-websocket
         - Start recording
         - Stop recording
         - Toggle recording
-    - do you want a haptic feedback every time the recording state changes? This includes:
+    - what duration do you want for the haptic feedback every time the recording state changes (Set to 0 to disable)? This includes the following events:
         - recording started
         - recording stopping
         - replay buffer saved

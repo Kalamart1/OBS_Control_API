@@ -25,7 +25,7 @@ namespace OBS_Control_API
         private static string password = "your_password_here";
         private string[] keyBindings = { "Nothing", "Nothing" };
         private bool[] bindingLocked = { false, false };
-        private bool hapticFeedback = true;
+        private float hapticsDuration = 1;
 
         // variables
         Mod Mod = new Mod();
@@ -187,7 +187,7 @@ namespace OBS_Control_API
                     "- Start recording\n" +
                     "- Stop recording\n" +
                     "- Toggle recording", new Tags { });
-            Mod.AddToList("Haptic feedback", true, 0, "Have a haptic impulse on both controllers when the recording state changes.", new Tags { });
+            Mod.AddToList("Haptic feedback duration", 0.2f, "Duration of the haptic impulse when the recording state changes.", new Tags { });
             Mod.GetFromFile();
         }
 
@@ -215,7 +215,7 @@ namespace OBS_Control_API
             password = (string)Mod.Settings[3].SavedValue;
             keyBindings[0] = (string)Mod.Settings[4].SavedValue;
             keyBindings[1] = (string)Mod.Settings[5].SavedValue;
-            hapticFeedback = (bool)Mod.Settings[6].SavedValue;
+            hapticsDuration = (float)Mod.Settings[6].SavedValue;
             Connect();
         }
 
@@ -287,9 +287,9 @@ namespace OBS_Control_API
          */
         private void Feedback()
         {
-            if (hapticFeedback)
+            if (hapticsDuration > 0)
             {
-                HapticFeedback(1, 0.2f);
+                HapticFeedback(1, hapticsDuration);
             }
         }
 
